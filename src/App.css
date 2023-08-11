@@ -1,0 +1,84 @@
+/* src/components/LandingPage.css (or LandingPage.module.css for CSS modules) */
+body {
+  background-color: #333333; /* Anthracite background color */
+  font-family: "Roboto", sans-serif; /* Change the font to Roboto */
+}
+
+.landing-page {
+  text-align: center;
+  padding: 20px;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+header img {
+  width: 100px; /* Adjust the size of the logo as needed */
+  height: 100px;
+}
+
+h1 {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f5f5f5;
+}
+
+tbody {
+  background-color: #f5f5f5;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin-bottom: 20px;
+}
+
+.main-search-bar {
+  flex: 1;
+}
+
+.search-button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+footer {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+}
