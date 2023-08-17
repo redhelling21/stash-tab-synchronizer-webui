@@ -1,11 +1,19 @@
 // src/components/LandingPage.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select, { ActionMeta, MultiValue } from "react-select";
 import './App.css'; // Make sure to import the CSS file for the component
 
-interface Option {
+interface LocalOption {
   value: string;
   label: string;
+  group: string;
+  type: string;
+}
+
+interface FetchedOption {
+  fullName: string;
+  group: string;
+  type: string;
 }
 
 interface SelectedInputValues {
@@ -13,15 +21,45 @@ interface SelectedInputValues {
 };
 
 const LandingPage = () => {
-  const [selectedOptions, setSelectedOptions] = useState<MultiValue<Option>>([]);
+  const [selectedOptions, setSelectedOptions] = useState<MultiValue<LocalOption>>([]);
   const [selectedInputValues, setSelectedInputValues] = useState<SelectedInputValues>({});
+  const [options, setOptions] = useState<LocalOption[]>([]);
+  const [groupedOptions, setGroupedOptions] = useState<{ label: string; options: LocalOption[] }[]>([]);
 
-  const options = [
-    { value: "option1", label: "Strength" },
-    { value: "option2", label: "iLvl" },
-    { value: "option3", label: "Rarity" },
-    { value: "option4", label: "Elder" }
-  ];
+  useEffect(() => {
+    // Fetch data from the external API
+    fetch('https://localhost:7017/api/Fields/GetAllFields')
+      .then(response => response.json())
+      .then((data: FetchedOption[]) => {
+        const transformed = data.map(item => ({
+          value: item.fullName,
+          label: item.fullName.includes('.') ? item.fullName.split('.').slice(1).join('.') : item.fullName,
+          group: item.group.replace(/Comparable/, '').replace(/Searchable/, '').replace(/([a-z])([A-Z])/g, '$1 $2'),
+          type: item.type
+        }));
+        setOptions(transformed);
+        const groups: { label: string; options: LocalOption[] }[] = [];
+        transformed.forEach(option => {
+          const groupIndex = groups.findIndex(group => group.label === option.group);
+          if (groupIndex !== -1) {
+            groups[groupIndex].options.push(option);
+          } else {
+            groups.push({
+              label: option.group,
+              options: [option]
+            });
+          }
+        });
+        setGroupedOptions(groups);
+      })
+      .catch(error => {
+        console.error('Error fetching options:', error);
+      });
+  }, []);
+
+  
+
+  
 
   const handleInputChange = (optionValue: any, inputValue: any) => {
     setSelectedInputValues((prevInputValues) => ({
@@ -30,13 +68,14 @@ const LandingPage = () => {
     }));
   };
 
-  const formatOptionLabel = ({ value, label }: Option) => {
+  const formatOptionLabel = ({ value, label }: LocalOption) => {
     const isSelected = selectedOptions.some((option) => option.value === value);
     if (isSelected) {
       return (
-        <div>
-          <span>{label}</span>
+        <div className="multi-select-item">
+          <span className="multi-select-item-label">{label}</span>
           <input
+            className="multi-select-item-input"
             type="text"
             value={selectedInputValues[value] || ""}
             onChange={(e) => handleInputChange(value, e.target.value)}
@@ -48,7 +87,7 @@ const LandingPage = () => {
     }
   };
 
-  const handleOptionChange = (newValue: MultiValue<Option>, actionMeta: ActionMeta<Option>) => {
+  const handleOptionChange = (newValue: MultiValue<LocalOption>, actionMeta: ActionMeta<LocalOption>) => {
     setSelectedOptions(newValue);
     setSelectedInputValues((prevInputValues) => {
       const updatedInputValues = { ...prevInputValues };
@@ -77,7 +116,7 @@ const LandingPage = () => {
         <div className="search-container">
           <Select
             isMulti
-            options={options}
+            options={groupedOptions}
             formatOptionLabel={formatOptionLabel}
             value={selectedOptions}
             onChange={handleOptionChange}

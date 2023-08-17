@@ -53,6 +53,7 @@ tbody {
   display: flex;
   align-items: center;
   justify-content: left;
+  text-align: left;
   margin-bottom: 20px;
 }
 
@@ -81,4 +82,15 @@ footer {
   left: 50%;
   transform: translateX(-50%);
   color: #fff;
+}
+
+.multi-select-item {
+}
+
+.multi-select-item-label {
+  margin-right: 5px;
+}
+
+.multi-select-item-input {
+  width: 5em
 }
